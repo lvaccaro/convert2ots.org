@@ -138,19 +138,32 @@ function run(filename, chainpoint){
 // Check chainpoint file
     const SupportedFormat = {CHAINPOINTv2: 1, CHAINPOINTv3: 2};
     let format = '';
-    if (ConvertOTS.checkValidHeaderChainpoint2(chainpoint)) {
-        format = SupportedFormat.CHAINPOINTv2;
-        console.log('Chainpoint v2 file format');
-        console.log('File type: ' + chainpoint.type);
-        console.log('Target hash: ' + chainpoint.targetHash);
-    } else if (ConvertOTS.checkValidHeaderChainpoint3(chainpoint)) {
-        format = SupportedFormat.CHAINPOINTv3;
-        console.log('Chainpoint v3 file format');
-        console.log('File type: ' + chainpoint.type);
-        console.log('Target hash: ' + chainpoint.hash);
+
+    if (chainpoint['@context'] === 'https://w3id.org/chainpoint/v2') {
+        try {
+            ConvertOTS.checkValidHeaderChainpoint2(chainpoint);
+            format = SupportedFormat.CHAINPOINTv2;
+            console.log('Chainpoint v2 file format');
+            console.log('File type: ' + chainpoint.type);
+            console.log('Target hash: ' + chainpoint.targetHash);
+        } catch (err) {
+            failure(err.message);
+            return;
+        }
+    } else if (chainpoint['@context'] !== 'https://w3id.org/chainpoint/v3') {
+        try {
+            ConverOTS.checkValidHeaderChainpoint3(chainpoint);
+            format = SupportedFormat.CHAINPOINTv3;
+            console.log('Chainpoint v3 file format');
+            console.log('File type: ' + chainpoint.type);
+            console.log('Target hash: ' + chainpoint.hash);
+        } catch (err) {
+            failure(err.message);
+            return;
+        }
     } else {
-        failure('Support only timestamps with attestations');
-        return;
+        failure("Unsupported input file");
+        return ;
     }
 
     // Check and generate merkle tree
