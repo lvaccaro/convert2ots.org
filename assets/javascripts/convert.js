@@ -150,7 +150,7 @@ function run(filename, chainpoint){
             failure(err.message);
             return;
         }
-    } else if (chainpoint['@context'] !== 'https://w3id.org/chainpoint/v3') {
+    } else if (chainpoint['@context'] === 'https://w3id.org/chainpoint/v3') {
         try {
             ConverOTS.checkValidHeaderChainpoint3(chainpoint);
             format = SupportedFormat.CHAINPOINTv3;
